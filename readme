@@ -11,8 +11,10 @@ Client part is served by server (through HTTP/S protocol) or app store.
 Project uses:
 
 * JetBrains PyCharm IDE
+https://www.jetbrains.com/pycharm/
 
 * PostgreSQL, Open source SQL database
+https://www.postgresql.org/
 
 * Tornado, Python web framework and asynchronous networking library
 https://github.com/tornadoweb/tornado
