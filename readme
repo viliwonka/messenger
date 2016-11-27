@@ -7,3 +7,18 @@ It consists of Server part and Client part.
 Server part should be hosted on public server. 
 
 Client part is served by server (through HTTP/S protocol) or app store.
+
+Project uses:
+
+* JetBrains PyCharm IDE
+
+* PostgreSQL, Open source SQL database
+
+* Tornado, Python web framework and asynchronous networking library
+https://github.com/tornadoweb/tornado
+
+* Transcrypt, Python in the browser, precompiled to Javascript
+https://github.com/JdeH/Transcrypt
+
+* Bootstrap, HTML5, CSS3 pack for UI 
+http://getbootstrap.com/getting-started/
