@@ -1,0 +1,9 @@
+Messenger app by 
+* Vili Volcini
+* Anze Mlakar
+
+It consists of Server part and Client part.
+
+Server part should be hosted on public server. 
+
+Client part is served by server (through HTTP/S protocol) or app store.
