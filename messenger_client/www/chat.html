@@ -1,0 +1,165 @@
+<html>
+	<head>
+
+	<!-- BOOTSTRAP EXAMPLE PAGE http://bootswatch.com/default/ -->
+
+	<!-- jQuery boostrap -->
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" crossorigin="anonymous"></script>
+
+	<!-- Latest compiled and minified CSS Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript Bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <script>
+         console.log("Ok, Autobahn loaded", autobahn.version);
+    </script>
+
+
+
+	</head>
+
+	<body>
+		<div class="navbar navbar-default navbar-fixed-top">
+	  		<div class="container">
+	    		<div class="navbar-header">
+	      			<a href="/index.html" class="navbar-brand">FMF chat club</a>
+	      			<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+	          		</button>
+	        	</div>
+	  		</div>
+	    </div>
+
+<br>
+<br>
+<br>
+
+<!-- od tu naprej -->
+		
+	<div class="col-md-3"> <!-- levi meni: sobe in prijatelji-->
+		
+
+		<h1>Soba</h1>
+		<ul>
+		<li> 
+			prva soba
+		</li>
+		<li>
+			druga soba
+		</li>
+		</ul>
+		<h1>Prijatelji</h1>
+		
+		<ul>
+		<li> 
+			<h4>prijatelj 1</h4>
+			<p>drzava 1</p>
+		</li>
+		<li>
+			<h4>prijatelj 2</h4>
+			<p>drzava 2</p>
+		</li>
+		</ul>
+		<br>
+
+		<div class = "row"> <!-- dodajanje prijateljev -->
+			<form class="form-inline">
+			  <div class="form-group">
+			    <label for="exampleInputName2">Ime</label>
+			    <input type="text" class="form-control" id="exampleInputName2" placeholder="Janez Novak">
+			  </div>
+			  
+			  <button type="submit" class="btn btn-default">Dodaj prijatelja</button>
+			</form>
+		</div>
+
+		
+	</div>
+
+	<div class="col-md-8"> <!-- sredina zgoraj: sporočila -->
+
+		<div class = "pre-scrollable">
+		<pre pre-scrollable>
+		test: ali dela scroll bar
+		Sprocilo 1
+		grege
+		gre
+		greg
+		g
+		grgr
+		r
+		rr
+		r
+		r
+		r
+		r
+		r
+		r
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+		d
+
+		d
+		d
+		r
+
+		r
+		</pre>
+		<pre >
+		krajse drugo sporočilo
+		</pre>
+		</div>
+
+<!--
+		<ul>
+		<li>
+		prvo sporocilo
+		</li>
+		<li>
+		drugo sporocilo
+		</li>
+		</ul>
+-->
+	</div>
+	<div class="col-md-8 col-md-offset-3"> <!-- sredina spodaj: vnos sporočil -->
+
+		<form class="pull.right"> <!-- vnos sporočila -->
+		  <div class="form-group">
+		    <label for="exampleInputName2">Vnesi sporocilo</label>
+		    <input type="text" class="form-control" id="exampleInputName2" placeholder="sporocilo">
+		  </div>
+		  
+		  <button type="submit" class="btn btn-default">Poslji</button>
+		</form>
+
+	</div>
+
+<!-- koda če hočm met na koncu pomojem ni nujno
+
+		<form class="bottom" padding-top = "60">  vnos sporočila
+		  <div class="form-group">
+		    <input type="text" class="form-control" id="exampleInputName2" placeholder="sporocilo">
+		  </div>
+		  
+		  <button type="submit" class="btn btn-default">Poslji</button>
+		</form> -->
+
+	</body>
+</html>

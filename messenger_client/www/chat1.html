@@ -1,0 +1,93 @@
+<html>
+<head>
+<style>
+div.container {
+    width: 100%;
+    border: 1px solid gray;
+}
+
+header, footer {
+    padding: 1em;
+    color: white;
+    background-color: black;
+    clear: left;
+    text-align: center;
+}
+
+nav {
+    float: left;
+    max-width: 260px;
+    margin: 0;
+    padding: 1em;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+   
+nav ul a {
+    text-decoration: none;
+}
+
+article {
+    margin-left: 170px;
+    border-left: 1px solid gray;
+    padding: 1em;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+   <h1>FMF chat club</h1>
+</header>
+  
+<nav>
+  <ul>
+  	<h2> Sobe </h2>
+    <li><a href="#">soba1</a></li>
+    <li><a href="#">soba2</a></li>
+    <li><a href="#">soba3</a></li>
+  </ul>
+  <ul>
+  	<h2> Prijatelji </h2>
+    <li><a href="#">prijatelj1</a></li>
+    <li><a href="#">prijatelj2</a></li>
+    <li><a href="#">prijatelj3</a></li>
+  </ul>
+</nav>
+
+<article>
+  <h1>Soba 1</h1>
+  <p>sporocilo 1</p>
+  <p>sporocilo 2</p>
+</article>
+
+<footer>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Poslji</button>
+    </form>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+    </script>
+</footer>
+
+</div>
+
+</body>
+</html>
