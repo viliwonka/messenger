@@ -12,7 +12,6 @@ Backend:
 * PostgreSQL, Open source SQL database
 https://www.postgresql.org/
 
-
 * Crossbar.io, WAMP (Web Application Messaging Protocol) router
 http://crossbar.io/
 
@@ -35,3 +34,6 @@ http://getbootstrap.com/getting-started/
 
 * Autobahn|Javascript, Javascript WAMP client
 http://autobahn.ws/js/
+
+* js-cookie, for client-side cookies
+https://github.com/js-cookie/js-cookie
