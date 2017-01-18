@@ -3,24 +3,35 @@ Messenger app by
 * Anze Mlakar
 
 It consists of Server part and Client part.
-
-Server part should be hosted on public server. 
-
-Client part is served by server (through HTTP/S protocol) or app store.
+Both parts live on server, client part is served by server through HTTP server. 
 
 Project uses:
 
-* JetBrains PyCharm IDE
-https://www.jetbrains.com/pycharm/
+Backend:
 
 * PostgreSQL, Open source SQL database
 https://www.postgresql.org/
 
-* Tornado, Python web framework and asynchronous networking library
-https://github.com/tornadoweb/tornado
 
-* Transcrypt, Python in the browser, precompiled to Javascript
-https://github.com/JdeH/Transcrypt
+* Crossbar.io, WAMP (Web Application Messaging Protocol) router
+http://crossbar.io/
+
+* nginx, HTTP server
+https://www.nginx.com/resources/wiki/
+
+* Python 3; runs backend script that connects to Crossbar.io and PostgreSQL database
+https://www.python.org/
+
+* Autobahn|Python, Python WAMP client
+http://autobahn.ws/python/
+
+* psycopg, python3 PostgreSQL driver
+http://initd.org/psycopg/
+
+Frontend:
 
 * Bootstrap, HTML5, CSS3 pack for UI 
 http://getbootstrap.com/getting-started/
+
+* Autobahn|Javascript, Javascript WAMP client
+http://autobahn.ws/js/
