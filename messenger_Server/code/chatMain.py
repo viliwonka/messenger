@@ -106,31 +106,55 @@ class MyComponent(ApplicationSession):
 		########################################################################
 		#search for friendship with this query, returns list of friends
 		#username of person that is doing query
-		def searchFriend(username, query):
+		def searchRooms(username, query):
 			pass
-
+			
+		def searchUsers(username, query):
+			return sqlQueries.searchUsername(username, query)
+		
+		await self.register(searchUsers, u'com.searchUsers')
+		
 		#request friendship with this query
 		#username of person that is doing query
 		#targetPerson is person that we are requesting friendship from
 		def requestFriendship(username, targetPerson):
-			pass
 
+			(status, origCaller) = sqlQueries.getFriendshipStatus(username, targetPerson)
+
+			#target person already sent request
+			if status == sqlQueries.fRequest and origCaller == targetPerson:
+				sqlQueries.setFriendshipStatus(username, targetPerson, sqlQueries.fAccepted)
+			else:
+				sqlQueries.setFriendshipStatus(username, targetPerson, sqlQueries.fRequest)
+
+			return True
+
+		await self.register(requestFriendship, u'com.requestFriendship')
 		#accept or ignore friend with this query
 		#username of person that is doing accept/ignore to targetPerson
 		#uses tables: user, friendship, participates, chatroom
 		def acceptFriendship(username, targetPerson, acceptElseIgnore):
-			pass
+ 
+			(status, origCaller) = sqlQueries.getFriendshipStatus(username, targetPerson)
 
+			if status == sqlQueries.fRequest and origCaller == targetPerson:
+				sqlQueries.setFriendshipStatus(username, targetPerson, sqlQueries.fRequest)
+				return True
+			else:
+				return False
+
+		await self.register(acceptFriendship, u'com.acceptFriendship')
 		#gets list of all friends and also their status (friended, waitingYouForAccept, waitingHimForAccept)
 		def getAllFriends(username):
-			pass
+			return sqlQueries.getAllFriends(username)
 
+		await self.register(getAllFriends, u'com.getAllFriends')
 		#########################################################################
 		#MESSAGING
 		#########################################################################
 		#send message to room/friend, also save it to database
-		def saveMessage(chatroomName, username, text, timestamp):
-			pass
+		def sendMessage(chatroomName, username, text, timestamp):
+			return False
 
 		def getMessages(chatroomName, username, from_timestamp, to_timestamp):
 			pass
@@ -139,7 +163,7 @@ class MyComponent(ApplicationSession):
 		#ROOMS
 		########################################################################
 
-		#not an actual query, but useful function that converts 
+		#not an actual query, but useful function that converts friendship chat to room
 		def friendshipToRoomName(friend1, friend2):
 			arr = [friend1, friend2]
 			arr.sort()
@@ -147,20 +171,26 @@ class MyComponent(ApplicationSession):
 
 		#uses tables: user, participates, chatroom
 		def createRoom(username, roomName):
+			#ignore now
 			pass
 
 		#uses tables: user, participates, chatroom
 		def joinRoom(username, roomName):
+			#ignore now
 			pass
 
 		#find rooms that are public
 		# uses tables: chatroom
 		def searchPublicRoom(username, query):
+			#ignore now
 			pass
 
 		def inviteToRoom(username, roomName, targetPerson):
+			#ignore now
 			pass
-		
+
+		sqlQueries.setFriendshipStatus("kmetkmet", "drekdrek", "Accepted")
+		print(str(sqlQueries.getAllFriends("kmetkmet")))
 if __name__ == '__main__':
 
 	print("Connecting to database")

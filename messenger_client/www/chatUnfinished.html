@@ -1,0 +1,261 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!-- BOOTSTRAP EXAMPLE PAGE http://bootswatch.com/default/ -->
+		<!-- jQuery boostrap -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<!-- Latest compiled and minified CSS Bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Optional theme Bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<!-- Latest compiled and minified JavaScript Bootstrap -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+	    <script>
+	         console.log("Ok, Autobahn loaded", autobahn.version);
+	    </script>
+
+		<script src="http://fmf-chat.club/scripts/js.cookie.js" 		crossorigin="anonymous"></script>
+		<script src="http://fmf-chat.club/scripts/chatAPI.js"			crossorigin="anonymous"></script>
+    
+	    <script>
+ 
+	    	var chatUI = chatUI || {};
+
+	    	$(function() {
+
+		    	chatUI.friendRoomsContainer    = $("#friendRoomsContainer");
+
+		    	chatUI.friendOrRoomTemplate    = $("#friendOrRoomTemplate").clone();
+
+	    		chatUI.chatName		  	   	   = $("#chatName");
+	    		chatUI.messagesContainer 	   = $("#messagesContainer");
+	    		chatUI.messageTemplate   	   = $("#messageTemplate").clone();
+
+				chatUI.notificationsContainer  = $("#notificationsContainer");
+				chatUI.friendRequestTemplate   = $("#friendRequestTemplate").clone();
+
+				chatUI.sendMessageButton 	   = $("#sendMessageButton");
+				chatUI.messageText			   = $("#messageText");
+
+				chatUI.searchText			   = $("#searchText");
+				chatUI.searchButton 		   = $("#searchButton");
+
+				chatUI.searchButton.click(function() {
+
+					var query = chatUI.searchText.val();
+					var username = chatAPI.loginData.username;
+
+					chatAPI.searchUsers(username, query, function(res) {
+
+						chatUI.clearFriendsRooms();
+
+						for(index = 0; index < res.length; ++index) {
+
+							var u 		= res[index][0]
+							var country = res[index][1]
+
+    						chatUI.appendFriendOrRoom(u, country, "", function() {
+
+    							if (confirm('Send friend request to ' + u + '?')) {
+    								chatAPI.requestFriendship(username, u, function(res){
+
+										chatUI.refreshFriends()
+    								})
+								}
+								else 
+								{
+									chatUI.refreshFriends()
+								}
+    						})
+						}
+					})
+				})
+
+				chatUI.refreshFriends = function() {
+
+					chatUI.clearFriendsRooms()
+
+					var username = chatAPI.loginData.username;
+
+					chatAPI.getAllFriends(username, function(res) {
+						
+						for(index = 0; index < res.length; ++index) {
+
+							var u       = res[index][0]
+							var country = res[index][1]
+
+    						chatUI.appendFriendOrRoom(u, country, "", function() {
+    							
+    						})
+						}
+					})
+				}
+
+				chatUI.clearFriendsRooms = function() {
+					chatUI.friendRoomsContainer.html("");					
+				}
+
+				chatUI.clearMessages = function() {
+					chatUI.messagesContainer.html("");				
+				}
+
+				chatUI.clearNotifications = function() {
+					chatUI.notificationsContainer.html("");
+				}
+
+				chatUI.appendFriendOrRoom = function(usernameOrRoomName, country, status, onClickCallback) {
+					
+					var template = chatUI.friendOrRoomTemplate.clone();
+					var ID = "ui_" + usernameOrRoomName;
+
+					template.attr("id", ID);
+
+					template.find(".ui_username").html(usernameOrRoomName);
+					template.find(".ui_country").html(country);
+					template.find(".ui_status").html(status);
+
+					template.click(onClickCallback);
+
+					chatUI.friendRoomsContainer.append(template);
+				}
+
+				chatUI.appendMessage = function(username, message) {
+					
+					var template = chatUI.messageTemplate.clone();
+					
+					template.addClass("msg_" + username);
+					template.html(username +": " + message);
+					
+					chatUI.messagesContainer.append(template);
+				}
+
+				chatUI.appendFriendRequest = function(username, acceptCallback, declineCallback) {
+					
+					var template = chatUI.friendRequestTemplate.clone();
+					
+					template.attr("id", "fr_request"+username);
+					
+					template.find("p").html(username + " wants to add you!");
+
+					template.find(".btn-success").click(acceptCallback);
+					template.find(".btn-danger").click(declineCallback);
+
+					chatUI.notificationsContainer.append(template);
+				}
+
+				chatUI.clearAll = function() {
+
+					chatUI.clearFriendsRooms();
+					chatUI.clearMessages();
+					chatUI.clearNotifications();
+				};
+				
+
+				chatUI.clearAll()
+				
+				chatAPI.onConnect = function(){
+
+					chatUI.refreshFriends()
+	
+				}
+			});
+			
+		</script>
+	</head>
+
+	<body>
+
+		<div class="navbar navbar-default navbar-fixed-top">
+	  		<div class="container">
+	    		<div class="navbar-header">
+	      			<a href="/index.html" class="navbar-brand">FMF chat club</a>
+	      			<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+	          		</button>
+	        	</div>
+	  		</div>
+	    </div>
+	
+	    <br>
+	    <br>
+	    <br>
+	    <br>
+
+    	<div class="container-fluid">
+	    	<div class="row">
+	    		<!-- Room/Friends  -->
+		    	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		    		<div class="panel panel-default">
+			    		<div class="panel-heading">
+			    			Friends & Rooms
+		    			</div>
+			    		<div id="friendRoomsContainer" class="list-group panel-body ">
+							<a id="friendOrRoomTemplate" class="list-group-item">
+
+								<h4 class="list-group-item-heading ui_username">Username</h4>
+	    						<p class="list-group-item-text ui_country">Country</p>
+	    						<p class="list-group-item-text ui_status">Status</p>
+							</a>
+			    		</div>
+
+		    		</div>
+		    		<div class="input-group">
+						<input id="searchText" type="text" class="form-control" placeholder="Search for friend, group or create room">
+						<span class="input-group-btn">
+							<button id="searchButton" class="btn btn-default" type="button">Search</button>
+						</span>
+				    </div>
+		    	</div>
+
+	    		<!-- Current chat  -->
+	    		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+	    			<div class="panel panel-info">
+		    			<div id="chatName" class="panel-heading">
+	    					Room: Databases
+		    			</div>
+	    				<div id="messagesContainer" class="panel-body pre-scrollable">
+		    				<div id="messageTemplate" class="breadcrumb">Username: message</div>
+						</div>
+						<div class="panel-body">
+							<div class="input-group">
+								<input id="messageText" type="text" class="form-control" placeholder="message">
+								<span class="input-group-btn">
+									<button id="sendMessageButton" class="btn btn-default" type="button">Send</button>
+								</span>
+				    		</div>
+			    		</div>
+		    		</div>	    		
+	    		</div>
+
+	    		<!-- Notifications -->
+	    		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		    		<div class="panel panel-default">
+			    		<div class="panel-heading">
+			    			Notifications
+		    			</div>
+
+			    		<div id="notificationsContainer" class="list-group panel-body">
+							<a id="friendRequestTemplate" class="list-group-item">
+
+								<h4 class="list-group-item-heading">New friend request!</h4>
+	    						<p class="list-group-item-text">[Friend] wants to add you!</p>
+	    						<br>
+
+	    						<button type="button" class="btn btn-success btn-sm ">
+	    							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Add
+	    						</button>
+
+								<button type="button" class="btn btn-danger btn-sm">
+									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Ignore
+								</button>
+							</a>
+			    		</div>
+		    		</div>
+		    	</div>
+	    	</div>
+    	</div>
+		<br>
+		<br>
+		<br>
+	</body>
+</html>

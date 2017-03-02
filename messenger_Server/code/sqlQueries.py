@@ -125,10 +125,16 @@ def registerUser(username, password, countrycode):
 #username of person that is doing query
 def searchUsername(searcher, query):
 		
-	SQL = """SELECT username FROM public.User WHERE username LIKE %%%(query)s%% AND username != %(searcher)s ORDER BY username"""
+	SQL ="""SELECT public.User.username, public.Country.name
+			FROM public.User  INNER JOIN public.Country
+			ON (public.User.CountryCode = public.Country.Code)
+			WHERE username LIKE %(query)s
+			AND username != %(searcher)s
+			ORDER BY username
+		 """
 
 	data = {
-		'query' 	: query,
+		'query' 	: ('%' + query + '%'),
 		'searcher' 	: searcher
 	}
 
@@ -138,10 +144,10 @@ def searchUsername(searcher, query):
 
 			searchResult = curs.fetchall()	
 
-			print("searchUsername: \n" + str(searchResult))
+			#print("searchUsername: \n" + str(searchResult))
 			dbConn.commit()
 
-			return searchResult
+			return [(x[0],x[1]) for x in searchResult]
 	except Exception as e:
 		print("searchUsername error: " + str(e))
 		return []
@@ -150,78 +156,113 @@ def searchUsername(searcher, query):
 # username of person that is doing query
 # targetPerson is person that we are requesting friendship from
 
+fNone     = "Empty"
 fRequest  = "Request"
 fIgnore   = "Ignore"
 fAccepted = "Accepted"
 
-friendStatus = [fRequest, fIgnore, fAccepted]
+friendStatus = [fRequest, fIgnore, fAccepted, fNone]
 
 def setFriendshipStatus(thisUsername, targetUsername, status):
 
 	global friendStatus
-	global fRequest
-	global fIgnore
-	global fAccepted
+
+	#error checking
+	if status not in friendStatus:
+		raise Exception("Wrong status")
 
 	arr = [thisUsername, targetUsername]
+	#sortiraj, da bo vedno v istem vrstnem redu
 	arr.sort()
-	SQL = """INSERT INTO public.friendship AS fs (Username_1, Username_2, Status) 
-	VALUES (%(UserOne)s, %(UserTwo)s, %(Status)s) 
-	ON CONFLICT (Username_1, Username_2) 
-	DO UPDATE SET Status = %(Status)s	
-	WHERE fs.Username_1 = %(UserOne)s AND fs.Username_2 = %(UserTwo)s """
+	
+	callIndex = 0
 
-""" INSERT INTO public.friendship as pf (Username_1, Username_2, Status) 
-	VALUES ('User1', 'User2', 'Accepted') 
-	ON CONFLICT (Username_1, Username_2) 
-	DO UPDATE SET (Status) = ('Accepted')	
-	WHERE pf.Username_1 = 'User1' AND pf.Username_2 = 'User2';
-"""
+	if(arr[1] == thisUsername):
+		callIndex = 1
+ 
+	data = {
+		'UserOne' : arr[0],
+		'UserTwo' : arr[1],
+		'Status'  : status + "_" + str(callIndex)
+	}
+	print("status: " + status)
+	#najprej preverimo, če obstaja zapis
+	SQL_exists = """SELECT * FROM public.friendship AS fs WHERE fs.Username_1 = %(UserOne)s AND fs.Username_2 = %(UserTwo)s""" 
+
+	recordExists = False
+
+	with dbConn.cursor() as curs:
+
+		curs.execute(SQL_exists, data)
+		if len(curs.fetchall()) == 0:
+			recordExists = False
+		else:
+			recordExists = True
+		dbConn.commit()
+		
+	SQL = ""
+
+	if recordExists:
+
+		SQL = """UPDATE public.friendship AS fs SET Status = %(Status)s
+				 WHERE fs.Username_1 = %(UserOne)s AND fs.Username_2 = %(UserTwo)s """
+		print("update")
+	else:
+		SQL = """INSERT INTO public.friendship (Username_1, Username_2, Status)
+				 VALUES (%(UserOne)s, %(UserTwo)s, %(Status)s)"""
+		print("insert")
 	# preverimo ce je status sploh pravi
-	if status in friendRequest:
-		stat = status
-		if stat == fRequest or stat == fIgnore
-			int num = 0 if (arr[0] == thisUsername) else 1
-			stat = stat + str(num)
 
-		data = {
-			'UserOne' : arr[0],
-			'UserTwo' : arr[1],
-			'Status'  : stat
-		}
-	else
-		print("wrong status")
-		throw new Exception("Wrong status")
+	with dbConn.cursor() as curs:
+
+		curs.execute(SQL, data)
+		dbConn.commit()
 
 def getFriendshipStatus(thisUsername, targetUsername):
 
-	global friendStatus
-	global fRequest
-	global fIgnore
-	global fAccepted
+	global fNone
 
 	arr = [thisUsername, targetUsername]
+	#sortiraj, da bo vedno v istem vrstnem redu
 	arr.sort()
+	
+	data = {
+		'UserOne' : arr[0],
+		'UserTwo' : arr[1]
+	}
+	
+	#najprej preverimo, če obstaja zapis
+	SQL = """SELECT Username_1, Username_2, Status FROM public.friendship AS fs WHERE fs.Username_1 = %(UserOne)s AND fs.Username_2 = %(UserTwo)s""" 
 
-	SQL = """SELECT Username_1, Username_2, Status FROM public.friendship 
-	WHERE Username_1 == %(username)s OR Username_2 == %(username)s"""
+	with dbConn.cursor() as curs:
 
-	#preverimo ce je status sploh pravi
-	if status in friendRequest:
-		stat = status
-		if stat == fRequest or stat == fIgnore
-			int num = 0 if (arr[0] == thisUsername) else 1
-			stat = stat + str(num)
+		curs.execute(SQL, data)
+		dbConn.commit()
 
-		data = {
-			'UserOne' : arr[0],
-			'UserTwo' : arr[1],
-			'Status'  : stat
-		}
-	else
-		print("wrong status")
-		throw new Exception("Wrong status")
+		fetched = curs.fetchall()
 
+		print("len:" + str(len(fetched)))
+		print("str:" + str(fetched))
+		
+		if len(fetched) == 0:
+			return (fNone,0)
+		elif len(fetched) == 1:
+		
+			user0 = fetched[0][0]
+			user1 = fetched[0][1]
+			stat  = fetched[0][2]
+
+			splitted = stat.split("_")
+
+			status 	  = splitted[0]
+			callIndex = splitted[1] #
+
+			if callIndex == 0:
+				return (status, user0)
+			else:
+				return (status, user1)
+		else:
+			raise Exception("WTF two records, something is not right man")
 
 # accept or ignore friend with this query
 # username of person that is doing accept/ignore to targetPerson
@@ -238,37 +279,22 @@ def requestFriendship(thisUsername, targetPerson):
 	global fRequest
 	setFriendshipStatus(thisUsername, targetPerson, fRequest)
 
-
-
 # gets list of all friends and also their status (friended, waitingYouForAccept, waitingHimForAccept)
 def getAllFriends(username):
 	
 	SQL = """SELECT Username_1, Username_2, Status FROM public.friendship 
-	WHERE Username_1 == %(username)s OR Username_2 == %(username)s"""
+			WHERE (Username_1 = %(username)s OR Username_2 = %(username)s)"""
 
-	data = {
-		'username' : username
-	}
+	data = { 'username' : username }
 
 	try:
 		with dbConn.cursor() as curs:
 
 			curs.execute(SQL, data)
 			fetched = curs.fetchall()
-			
-			friendStatusList = []
-
-			for tupple in fetched:
-
-				if tupple[0] == username:
-					friendStatusList += [tupple[1], tupple[2]]
-				else:
-					friendStatusList += [tupple[0], tupple[2]]
-
-			print("getAllFriends: \n" + str(fetched))
-
 			dbConn.commit()
-			return friendStatusList
+
+			return fetched
 	except Exception as e:
 		print("getAllFriends exception: \n" + str(e))
 		return []
@@ -278,11 +304,9 @@ def getAllFriends(username):
 # ########################################################################
 # send message to room/friend, also save it to database
 def saveMessage(chatroomName, username, text, timestamp):
-	
 	pass
 
 def getMessages(chatroomName, username, from_timestamp, to_timestamp):
-
 	pass
 
 # ########################################################################
@@ -297,21 +321,16 @@ def friendshipToRoomName(friend1, friend2):
 
 #uses tables: user, participates, chatroom
 def createRoom(username, roomName):
-	
 	pass
 
 #uses tables: user, participates, chatroom
 def joinRoom(username, roomName):
-	
 	pass
 
 #find rooms that are public
 # uses tables: chatroom
 def searchPublicRoom(username, query):
-	
 	pass
 
 def inviteToRoom(username, roomName, targetPerson):
-
 	pass
-

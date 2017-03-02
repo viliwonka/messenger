@@ -74,7 +74,8 @@ $(function() {
          //rezultat registracije
          if(result == "ok")
          {
-            alert("Login sucessful!!");
+            window.location.href = "http://fmf-chat.club/chatUnfinished.html";
+            
          }
          else if(result == "wrong") 
          {
